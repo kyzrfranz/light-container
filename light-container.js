@@ -1,5 +1,5 @@
 import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
-import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer.js';
+import {FlattenedNodesObserver} from '@polymer/polymer/lib/utils/flattened-nodes-observer.js';
 
 /**
  * `light-container`
@@ -66,10 +66,9 @@ class LightContainer extends PolymerElement {
 
             lazyLoad: {
                 type: Boolean,
-                value: true,
                 reflectToAttribute: true
             },
-            _countdownLatch:{
+            _countdownLatch: {
                 type: Number,
                 value: 0,
                 observer: '_onLatchChanged'
@@ -83,18 +82,17 @@ class LightContainer extends PolymerElement {
     }
 
 
-
-    connectedCallback(){
+    connectedCallback() {
         super.connectedCallback()
         let startObserver = this._observeNodes.bind(this)
         setTimeout(startObserver, 0)
 
-        if(this.lazyLoad){
+        if (this.lazyLoad) {
             this.loading = true
         }
     }
 
-    disconnectedCallback(){
+    disconnectedCallback() {
         this._observer.disconnect()
     }
 
@@ -105,12 +103,13 @@ class LightContainer extends PolymerElement {
         });
     }
 
-    _processNewNodes(addedNodes){
+    _processNewNodes(addedNodes) {
         this._nodes = addedNodes
 
-        for(let n of this._nodes){
-            if(n.nodeName != "#text"){
-                if(n.hasAttribute("lazy")){
+        for (let n of this._nodes) {
+            if (n.nodeName != "#text") {
+
+                if (this.lazyLoad && n.hasAttribute("lazy")) {
                     this._countdownLatch++
                     console.log("latch", this._countdownLatch)
                     let listenerHandle = this._signalListener.bind(this)
@@ -120,20 +119,20 @@ class LightContainer extends PolymerElement {
         }
     }
 
-    _processRemovedNodes(removedNodes){
+    _processRemovedNodes(removedNodes) {
         this._nodes.splice(removedNodes)
         console.log(this._nodes)
     }
 
-    _signalListener(e){
+    _signalListener(e) {
         console.log(e)
-        if(this._countdownLatch > 0){
+        if (this._countdownLatch > 0) {
             this._countdownLatch--
         }
     }
 
-    _onLatchChanged(newValue, oldValue){
-        if(newValue == 0){
+    _onLatchChanged(newValue, oldValue) {
+        if (newValue == 0) {
             this.loading = false
         }
     }
